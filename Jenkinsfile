@@ -98,11 +98,14 @@ pipeline {
                     mkdir -p reports
                     trivy image --no-progress --format cyclonedx \
                         --output reports/sbom.cdx.json ${IMAGE_REF}
+                    trivy image --no-progress --format spdx-json \
+                        --output sbom-spdx.json ${IMAGE_REF}
+                    cp sbom-spdx.json reports/sbom-spdx.json
                 '''
             }
             post {
                 always {
-                    archiveArtifacts artifacts: 'reports/sbom.cdx.json', allowEmptyArchive: true
+                    archiveArtifacts artifacts: 'reports/sbom.cdx.json,sbom-spdx.json', allowEmptyArchive: true
                 }
             }
         }
